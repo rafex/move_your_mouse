@@ -131,40 +131,32 @@
 
 	</build>
 
-	<!--	<reporting>-->
-	<!--		<plugins>-->
-	<!--			<plugin>-->
-	<!--				<groupId>org.apache.maven.plugins</groupId>-->
-	<!--				<artifactId>maven-project-info-reports-plugin</artifactId>-->
-	<!--				<reportSets>-->
-	<!--					<reportSet>-->
-	<!--						<reports> select reports -->
-	<!--							<report>index</report>-->
-	<!--						</reports>-->
-	<!--					</reportSet>-->
-	<!--				</reportSets>-->
-	<!--			</plugin>-->
-	<!--			<plugin>-->
-	<!--				<groupId>org.apache.maven.plugins</groupId>-->
-	<!--				<artifactId>maven-javadoc-plugin</artifactId>-->
-	<!--				<reportSets>-->
-	<!--					<reportSet> by default, id = "default" -->
-	<!--						<reports> select non-aggregate reports -->
-	<!--							<report>javadoc</report>-->
-	<!--							<report>test-javadoc</report>-->
-	<!--						</reports>-->
-	<!--					</reportSet>-->
-	<!--					<reportSet> aggregate reportSet, to define in poms-->
-	<!--						having modules -->
-	<!--						<id>aggregate</id>-->
-	<!--						<inherited>false</inherited> don't run aggregate in-->
-	<!--						child modules -->
-	<!--						<reports>-->
-	<!--							<report>aggregate</report>-->
-	<!--						</reports>-->
-	<!--					</reportSet>-->
-	<!--				</reportSets>-->
-	<!--			</plugin>-->
-	<!--		</plugins>-->
-	<!--	</reporting>-->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>summary</report>
+<!--							<report>ci-management</report>-->
+                            <report>licenses</report>
+                            <report>dependency-management</report>
+                            <report>dependencies</report>
+<!--                            <report>dependency-info</report>-->
+<!--                            <report>issue-management</report>-->
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+							<report>team</report>	
+<!--							<report>mailing-lists</report>	-->
+<!--							<report>modules</report>	-->
+<!--							<report>scm</report>	-->
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

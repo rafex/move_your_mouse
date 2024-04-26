@@ -4,7 +4,9 @@ package mx.rafex.free.project.moveYourMouse;
  * Clase principal de la aplicacion
  */
 
-public class App {
+public class App extends ApplicationAbstract {
+
+    private static final long serialVersionUID = -6070214321027325615L;
 
     /**
      * Metodo principal de la aplicacion
@@ -13,6 +15,7 @@ public class App {
      */
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        init();
+
     }
 }

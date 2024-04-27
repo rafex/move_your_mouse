@@ -1,0 +1,6 @@
+.settigs/
+target/
+.project
+.classpath
+.gitignore
+.dockerignore

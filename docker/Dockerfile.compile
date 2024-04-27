@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jdk AS compile
+
+LABEL org.opencontainers.image.authors="rafex@rafex.dev"
+
+WORKDIR /app
+
+COPY Move-Your-Mouse/ .
+
+#RUN ls -la
+RUN ./mvnw clean package -DskipTests

@@ -43,6 +43,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
+		<mainClass>mx.rafex.free.project.moveYourMouse.App</mainClass>
+		<native.maven.plugin.version>0.10.1</native.maven.plugin.version>
+		<imageName>fortune</imageName>
 	</properties>
 
 	<dependencyManagement>
@@ -65,6 +68,50 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>native</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.graalvm.buildtools</groupId>
+						<artifactId>native-maven-plugin</artifactId>
+						<version>${native.maven.plugin.version}</version>
+						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<id>build-native</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+							<execution>
+								<id>test-native</id>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<phase>test</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<fallback>false</fallback>
+							<buildArgs>
+								<arg>-H:DashboardDump=fortune -H:+DashboardAll</arg>
+							</buildArgs>
+							<agent>
+								<enabled>true</enabled>
+								<options>
+									<option>experimental-class-loader-support</option>
+								</options>
+							</agent>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<build>
 		<pluginManagement>
@@ -123,6 +170,11 @@
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>3.7.1</version>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.0.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -136,6 +188,10 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.source}</target>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -146,9 +202,9 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>libs/</classpathPrefix>
+							<!--							<classpathPrefix>libs/</classpathPrefix>-->
 							<mainClass>
-								mx.rafex.free.project.moveYourMouse.App
+								${mainClass}
 							</mainClass>
 						</manifest>
 					</archive>
@@ -185,14 +241,55 @@
 						<configuration>
 							<archive>
 								<manifest>
+									<addClasspath>true</addClasspath>
 									<mainClass>
-										mx.rafex.free.project.moveYourMouse.App
+										${mainClass}
 									</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>java</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>${mainClass}</mainClass>
+						</configuration>
+					</execution>
+					<execution>
+						<id>java-agent</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${project.build.directory}</workingDirectory>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<argument>${mainClass}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>native</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>${project.build.directory}/${imageName}</executable>
+							<workingDirectory>${project.build.directory}</workingDirectory>
 						</configuration>
 					</execution>
 				</executions>

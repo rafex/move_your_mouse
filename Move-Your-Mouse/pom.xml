@@ -81,6 +81,13 @@
 						<extensions>true</extensions>
 						<executions>
 							<execution>
+								<id>native</id>
+								<goals>
+									<goal>compile-no-fork</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+							<execution>
 								<id>build-native</id>
 								<goals>
 									<goal>build</goal>
@@ -96,6 +103,7 @@
 							</execution>
 						</executions>
 						<configuration>
+							<imageName>${imageName}</imageName>
 							<fallback>false</fallback>
 							<buildArgs>
 								<arg>-H:DashboardDump=fortune -H:+DashboardAll</arg>
@@ -108,12 +116,36 @@
 							</agent>
 						</configuration>
 					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.2.0</version>
+						<executions>
+							<execution>
+								<id>java-agent</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>test</phase>
+								<configuration>
+									<executable>java</executable>
+									<workingDirectory>${project.build.directory}</workingDirectory>
+									<arguments>
+										<argument>-classpath</argument>
+										<classpath />
+										<argument>${mainClass}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
 				<!-- clean lifecycle, see
@@ -173,7 +205,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.2.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

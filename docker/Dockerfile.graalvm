@@ -1,0 +1,19 @@
+FROM my_graalvm:17 AS compile
+
+LABEL org.opencontainers.image.authors="rafex@rafex.dev"
+
+WORKDIR /app
+
+COPY Move-Your-Mouse/ .
+
+#RUN ls -la
+RUN ./mvnw clean package -DskipTests
+
+# Run the agent
+RUN ./mvnw -Pnative -Dagent exec:exec@java-agent
+
+# Build the native executable
+RUN ./mvnw -Pnative -Dagent package
+
+# Run the application with Maven and from a native executable
+RUN ./mvnw -Pnative exec:exec@native

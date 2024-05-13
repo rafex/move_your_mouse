@@ -14,7 +14,7 @@ public abstract class ApplicationAbstract implements IApp {
     protected static void init() {
         LOG.log(Level.INFO, String.format("[Init: %s ]", System.currentTimeMillis()));
 
-        mouse.moveTest();
+        mouse.moveDemo();
     }
 
 }

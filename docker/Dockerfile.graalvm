@@ -2,18 +2,47 @@ FROM my_graalvm:17 AS compile
 
 LABEL org.opencontainers.image.authors="rafex@rafex.dev"
 
+ENV DEBIAN_FRONTEND=noninteractive 
+ENV JAVA_TOOL_OPTIONS=-Djava.awt.headless=false    
+ENV DISPLAY=:99 
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends \ 
+  xvfb \
+  x11-utils \
+  locales \
+  xauth \
+  fonts-dejavu \
+  libgl1-mesa-dri \
+  && rm -rf /var/lib/apt/lists/*
+
+ADD scripts-utils-containers/xvfb/xvfb.sh /usr/bin/xvfb-startup
+#RUN gu install native-image
+
+#ARG RESOLUTION="1920x1080x24"
+#ENV XVFB_RES="${RESOLUTION}"
+#ARG XARGS=""
+#ENV XVFB_ARGS="${XARGS}"
+#ADD scripts-utils-containers/xvfb/xvfb-startup.sh /usr/bin/xvfb-startup
+
 WORKDIR /app
 
 COPY Move-Your-Mouse/ .
 
+#RUN xvfb-startup &
+
 #RUN ls -la
+# package the application
 RUN ./mvnw clean package -DskipTests
+RUN echo "Finished compiling the application"
 
 # Run the agent
-RUN ./mvnw -Pnative -Dagent exec:exec@java-agent
+RUN xvfb-startup & ./mvnw -Pnative -Dagent exec:exec@java-agent
+RUN echo "Finished running the agent"
 
 # Build the native executable
-RUN ./mvnw -Pnative -Dagent package
+RUN ./mvnw -Pnative -Dagent package -DskipTests
+RUN echo "Finished building the native executable"
 
 # Run the application with Maven and from a native executable
-RUN ./mvnw -Pnative exec:exec@native
+#RUN my-xvfb-start & ./mvnw -Pnative exec:exec@native
+#RUN echo "Finished running the native executable"

@@ -26,7 +26,7 @@ public class MouseImpl implements Mouse {
     }
 
     @Override
-    public void moveTest() {
+    public void moveDemo() {
         try {
             // Create an instance of Robot
             final var robot = new Robot();

@@ -103,6 +103,11 @@
 							</execution>
 						</executions>
 						<configuration>
+                            <fallback>false</fallback>
+                        </configuration>
+
+						<!--
+						<configuration>
 							<imageName>${imageName}</imageName>
 							<fallback>false</fallback>
 							<buildArgs>
@@ -114,7 +119,8 @@
 									<option>experimental-class-loader-support</option>
 								</options>
 							</agent>
-						</configuration>
+						</configuration> 
+						-->
 					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>

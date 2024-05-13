@@ -6,6 +6,6 @@ public interface Mouse {
 
     Logger LOG = Logger.getLogger(Mouse.class.getName());
 
-    void moveTest();
+    void moveDemo();
 
 }

@@ -2,3 +2,8 @@
 .gitignore
 !LICENSE
 README.md
+.settigs/
+target/
+.project
+.classpath
+.gitignore

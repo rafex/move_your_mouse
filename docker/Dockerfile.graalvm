@@ -1,48 +1,50 @@
-FROM my_graalvm:17 AS compile
+FROM my_graalvm-custom:17-xvfb AS compile
 
 LABEL org.opencontainers.image.authors="rafex@rafex.dev"
-
-ENV DEBIAN_FRONTEND=noninteractive 
-ENV JAVA_TOOL_OPTIONS=-Djava.awt.headless=false    
-ENV DISPLAY=:99 
-
-RUN apt-get update -y && apt-get install -y --no-install-recommends \ 
-  xvfb \
-  x11-utils \
-  locales \
-  xauth \
-  fonts-dejavu \
-  libgl1-mesa-dri \
-  && rm -rf /var/lib/apt/lists/*
-
-ADD scripts-utils-containers/xvfb/xvfb.sh /usr/bin/xvfb-startup
-#RUN gu install native-image
-
-#ARG RESOLUTION="1920x1080x24"
-#ENV XVFB_RES="${RESOLUTION}"
-#ARG XARGS=""
-#ENV XVFB_ARGS="${XARGS}"
-#ADD scripts-utils-containers/xvfb/xvfb-startup.sh /usr/bin/xvfb-startup
 
 WORKDIR /app
 
 COPY Move-Your-Mouse/ .
+RUN ls -la
 
-#RUN xvfb-startup &
-
-#RUN ls -la
 # package the application
-RUN ./mvnw clean package -DskipTests
-RUN echo "Finished compiling the application"
+RUN ./mvnw clean package -DskipTests -Djava.awt.headless=false
+RUN echo "\e[31mFinished compiling the application\e[0m"
+RUN ls -la
+
+FROM my_graalvm-custom:17-xvfb AS native-java-agent
+
+WORKDIR /app
+
+COPY --from=compile /app .
+
+RUN 
+RUN ls -la
 
 # Run the agent
-RUN xvfb-startup & ./mvnw -Pnative -Dagent exec:exec@java-agent
-RUN echo "Finished running the agent"
+RUN xvfb-startup & ./mvnw -Pnative -Dagent exec:exec@java-agent -DskipTests -Djava.awt.headless=false
+RUN echo "\e[31mFinished running the agent\e[0m"
+
+FROM my_graalvm-custom:17-xvfb AS native-package
+
+WORKDIR /app
+
+COPY --from=native-java-agent /app .
+
+RUN ls -la
 
 # Build the native executable
-RUN ./mvnw -Pnative -Dagent package -DskipTests
-RUN echo "Finished building the native executable"
+RUN xvfb-startup & ./mvnw -Pnative -Dagent package -DskipTests -Djava.awt.headless=false
+RUN echo "\e[31mFinished building the native executable\e[0m"
+
+FROM my_graalvm-custom:17-xvfb AS native-exec
+
+WORKDIR /app
+
+COPY --from=native-package /app .
+
+RUN ls -la
 
 # Run the application with Maven and from a native executable
-#RUN my-xvfb-start & ./mvnw -Pnative exec:exec@native
-#RUN echo "Finished running the native executable"
+RUN my-xvfb-start & ./mvnw -Pnative exec:exec@native -DskipTests -Djava.awt.headless=false
+RUN echo "\e[31mFinished running the native executable\e[0m"

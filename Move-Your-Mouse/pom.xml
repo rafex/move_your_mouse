@@ -9,7 +9,7 @@
 	<artifactId>Move-Your-Mouse</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>Move-Your-Mouse</name>
+	<name>${project.artifactId}</name>
 
 	<description>
 		Move your mouse to prevent your computer from going to sleep.
